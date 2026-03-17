@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Briefcase, User, Menu, X } from "lucide-react";
+import { Briefcase, User, Menu, X, Users } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +9,7 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: "Find Jobs", icon: Briefcase },
+    { to: "/skills", label: "Find Skills", icon: Users },
     { to: "/profile", label: "My Profile", icon: User },
   ];
 
