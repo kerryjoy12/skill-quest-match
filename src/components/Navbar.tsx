@@ -1,17 +1,25 @@
 import { Link, useLocation } from "react-router-dom";
-import { Briefcase, User, Menu, X, Users } from "lucide-react";
+import { Briefcase, User, Menu, X, Users, LogIn, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
-  const links = [
+  const publicLinks = [
     { to: "/", label: "Find Jobs", icon: Briefcase },
     { to: "/skills", label: "Find Skills", icon: Users },
-    { to: "/profile", label: "My Profile", icon: User },
   ];
+
+  const authLinks = user
+    ? [
+        ...publicLinks,
+        { to: "/profile", label: "My Profile", icon: User },
+      ]
+    : publicLinks;
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
@@ -27,7 +35,7 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
-          {links.map((link) => (
+          {authLinks.map((link) => (
             <Link key={link.to} to={link.to}>
               <Button
                 variant={location.pathname === link.to ? "default" : "ghost"}
@@ -39,6 +47,17 @@ const Navbar = () => {
               </Button>
             </Link>
           ))}
+          {user ? (
+            <Button variant="ghost" size="sm" className="gap-2" onClick={signOut}>
+              <LogOut className="h-4 w-4" /> Logout
+            </Button>
+          ) : (
+            <Link to="/login">
+              <Button variant="default" size="sm" className="gap-2">
+                <LogIn className="h-4 w-4" /> Login / Sign Up
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -53,12 +72,8 @@ const Navbar = () => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="border-t bg-card p-4 md:hidden">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              onClick={() => setMobileOpen(false)}
-            >
+          {authLinks.map((link) => (
+            <Link key={link.to} to={link.to} onClick={() => setMobileOpen(false)}>
               <Button
                 variant={location.pathname === link.to ? "default" : "ghost"}
                 className="w-full justify-start gap-2 mb-1"
@@ -68,6 +83,17 @@ const Navbar = () => {
               </Button>
             </Link>
           ))}
+          {user ? (
+            <Button variant="ghost" className="w-full justify-start gap-2 mb-1" onClick={() => { signOut(); setMobileOpen(false); }}>
+              <LogOut className="h-4 w-4" /> Logout
+            </Button>
+          ) : (
+            <Link to="/login" onClick={() => setMobileOpen(false)}>
+              <Button variant="default" className="w-full justify-start gap-2 mb-1">
+                <LogIn className="h-4 w-4" /> Login / Sign Up
+              </Button>
+            </Link>
+          )}
         </div>
       )}
     </nav>
